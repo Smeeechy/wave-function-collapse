@@ -1,24 +1,14 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styles from './Tile.module.css'
 
-const Tile = props => {
-  const [orientation, setOrientation] = useState(props.orientations.none)
+const Tile = ({ getNeighbors, index, orientations, size, onCollapse }) => {
+  const [orientation, setOrientation] = useState(orientations.none)
+  const [collapseOptions, setCollapseOptions] = useState(
+    [...Object.keys(orientations)].filter(key => key !== 'none')
+  )
 
-  const collapse = () => {
-    const neighbors = props.getNeighbors(props.index)
-    const valid = getValidOrientations(neighbors, props.orientations)
-    const choice = valid[Math.floor(Math.random() * valid.length)]
-    props.onCollapse(props.index, choice)
-    setOrientation(props.orientations[choice])
-  }
-
-  const handleCollapse = () => {
-    if (orientation === props.orientations.none) {
-      collapse()
-    }
-  }
-
-  const getValidOrientations = (neighbors, orientations) => {
+  useEffect(() => {
+    const neighbors = getNeighbors(index)
     let valid = [...Object.keys(orientations)].filter(key => key !== 'none')
     for (const neighbor in neighbors) {
       if (neighbor === null) continue
@@ -127,17 +117,49 @@ const Tile = props => {
           break
       }
     }
-    return valid
+    setCollapseOptions(valid)
+  }, [orientations, getNeighbors, index])
+
+  const collapse = () => {
+    const choice =
+      collapseOptions[Math.floor(Math.random() * collapseOptions.length)]
+    onCollapse(index, choice)
+    setOrientation(orientations[choice])
   }
 
-  const style = {
-    width: props.size,
-    height: props.size
+  const clickHandler = () => {
+    if (orientation === orientations.none) {
+      collapse()
+    }
   }
+
+  const containerSizingStyle = {
+    width: size,
+    height: size,
+  }
+
+  const maxOptions = Object.keys(orientations).length - 1
+  const currentOptions = collapseOptions.length
+  const opacity = (maxOptions - currentOptions) / maxOptions
+
+  const uncollapsedImage = (
+    <div
+      className={styles.uncollapsed}
+      style={{
+        opacity
+      }}
+    >
+      <div className={styles.uncollapsedText}>{collapseOptions.length}</div>
+    </div>
+  )
+
+  const collapsedImage = (
+    <img alt='a tile' src={orientation} className={styles.image} />
+  )
 
   return (
-    <div style={style} onClick={handleCollapse} >
-      <img alt='a tile' src={orientation} className={styles.image} />
+    <div className={styles.container} style={containerSizingStyle} onClick={clickHandler}>
+      {orientation === orientations.none ? uncollapsedImage : collapsedImage}
     </div>
   )
 }

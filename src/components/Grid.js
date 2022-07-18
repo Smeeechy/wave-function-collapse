@@ -2,8 +2,8 @@ import { useState } from 'react'
 import styles from './Grid.module.css'
 import Tile from './Tile'
 
-const Grid = props => {
-  const tileCount = props.rows * props.cols
+const Grid = ({rows, cols}) => {
+  const tileCount = rows * cols
   const orientations = {
     up: require('../assets/up.png'),
     down: require('../assets/down.png'),
@@ -24,9 +24,9 @@ const Grid = props => {
   }
 
   const getNeighbors = index => {
-    const top = tiles[index - props.cols] ? tiles[index - props.cols] : null
+    const top = tiles[index - cols] ? tiles[index - cols] : null
     const right = tiles[index + 1] ? tiles[index + 1] : null
-    const bottom = tiles[index + props.cols] ? tiles[index + props.cols] : null
+    const bottom = tiles[index + cols] ? tiles[index + cols] : null
     const left = tiles[index - 1] ? tiles[index - 1] : null
     return { top, right, bottom, left }
   }
@@ -37,7 +37,7 @@ const Grid = props => {
         <Tile
           key={index}
           index={index}
-          size={(window.innerWidth - 20) / props.cols}
+          size={(window.innerWidth - 20) / cols}
           onCollapse={collapseHandler}
           getNeighbors={getNeighbors}
           orientations={orientations}

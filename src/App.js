@@ -1,7 +1,7 @@
 import styles from './App.module.css'
 import Grid from './components/Grid'
 
-const rows = 50
+const rows = 10
 const cols = 2 * rows
 
 const App = () => {
@@ -10,8 +10,8 @@ const App = () => {
       <Grid rows={rows} cols={cols} />
       <div className={styles.buttons}>
         {/*TODO: make these buttons work*/}
-        <button>Auto-Complete</button>
-        <button>Reset</button>
+        <button className={`${styles.button} ${styles.complete}`}>Auto-Complete</button>
+        <button className={`${styles.button} ${styles.reset}`}>Reset</button>
       </div>
     </div>
   )
