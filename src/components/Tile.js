@@ -135,7 +135,7 @@ const Tile = ({ getNeighbors, index, orientations, size, onCollapse }) => {
 
   const containerSizingStyle = {
     width: size,
-    height: size,
+    height: size
   }
 
   const maxOptions = Object.keys(orientations).length - 1
@@ -158,7 +158,11 @@ const Tile = ({ getNeighbors, index, orientations, size, onCollapse }) => {
   )
 
   return (
-    <div className={styles.container} style={containerSizingStyle} onClick={clickHandler}>
+    <div
+      className={styles.container}
+      style={containerSizingStyle}
+      onClick={clickHandler}
+    >
       {orientation === orientations.none ? uncollapsedImage : collapsedImage}
     </div>
   )

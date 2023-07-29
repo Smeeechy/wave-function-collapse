@@ -2,7 +2,7 @@ import { useState } from 'react'
 import styles from './Grid.module.css'
 import Tile from './Tile'
 
-const Grid = ({rows, cols}) => {
+const Grid = ({ rows, cols }) => {
   const tileCount = rows * cols
   const orientations = {
     up: require('../assets/up.png'),
