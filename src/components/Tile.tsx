@@ -1,123 +1,77 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import styles from './Tile.module.css'
-import { NeighborStates } from './Grid'
+import { NeighborStatesType, OrientationsType } from './Grid'
 
 type TileProps = {
-  getNeighborStates: (index: number) => NeighborStates,
+  getNeighborStates: (index: number) => NeighborStatesType,
   index: number,
-  orientations: any,
+  orientations: OrientationsType,
   size: number,
-  onCollapse: Function
+  onCollapse: (index: number, choice: string) => void
+}
+
+const intersect = (a: Set<string>, b: Set<string>): Set<string> => {
+  const result = new Set<string>()
+  a.forEach((entry: string) => { if(b.has(entry)) result.add(entry) })
+  return result
 }
 
 const Tile = ({ getNeighborStates, index, orientations, size, onCollapse }: TileProps) => {
+  const getOrientationsArray = useCallback((): string[] => [...Object.keys(orientations)], [orientations])
   const [orientation, setOrientation] = useState(orientations.none)
-  const [collapseOptions, setCollapseOptions] = useState(
-    [...Object.keys(orientations)].filter(key => key !== 'none')
-  )
+  const [collapseOptions, setCollapseOptions] = useState(getOrientationsArray().filter(key => key !== 'none'))
+
+  const collapse = useCallback(() => {
+    const choice = collapseOptions[Math.floor(Math.random() * collapseOptions.length)]
+    onCollapse(index, choice)
+    setOrientation(orientations[choice])
+  }, [collapseOptions, index, onCollapse, orientations])
 
   useEffect(() => {
     const neighborStates = getNeighborStates(index)
-    let valid = [...Object.keys(orientations)].filter(key => key !== 'none')
+    let valid = new Set(getOrientationsArray().filter(key => key !== 'none'))
+
+    // sets containing various tile options for filtering
+    const solidUp = new Set(getOrientationsArray().filter((option: string) => option.includes('up')) as string[])
+    const solidLeft = new Set(getOrientationsArray().filter((option: string) => option.includes('left')) as string[])
+    const solidRight = new Set(getOrientationsArray().filter((option: string) => option.includes('right')) as string[])
+    const solidDown = new Set(getOrientationsArray().filter((option: string) => option.includes('down')) as string[])
+    const emptyUp = new Set(getOrientationsArray().filter((option: string) => !option.includes('up')) as string[])
+    const emptyLeft = new Set(getOrientationsArray().filter((option: string) => !option.includes('left')) as string[])
+    const emptyRight = new Set(getOrientationsArray().filter((option: string) => !option.includes('right')) as string[])
+    const emptyDown = new Set(getOrientationsArray().filter((option: string) => !option.includes('down')) as string[])
     
     for (const neighbor in neighborStates) {
       if (neighbor === null) continue
+      let neighborState: string | null;
 
       switch (neighbor) {
         case 'up':
-          switch (neighborStates[neighbor]) {
-            case 'up':
-            case 'horizontal':
-            case 'blank':
-              valid = valid.filter(dir =>
-                dir !== 'up' &&
-                dir !== 'right' &&
-                dir !== 'left' &&
-                dir !== 'vertical')
-              break
-
-            case 'right':
-            case 'down':
-            case 'left':
-            case 'vertical':
-              valid = valid.filter(dir => dir !== 'down' && dir !== 'horizontal' && dir !== 'blank')
-              break
-
-            default:
-              break
-          }
+          neighborState = neighborStates[neighbor]
+          if (!neighborState || neighborState === 'none') break
+          if (neighborState.includes('down')) valid = intersect(solidUp, valid)
+          else valid = intersect(emptyUp, valid)
           break
 
         case 'right':
-          switch (neighborStates[neighbor]) {
-            case 'right':
-            case 'vertical':
-            case 'blank':
-              valid = valid.filter(dir =>
-                dir !== 'up' &&
-                dir !== 'right' &&
-                dir !== 'down' &&
-                dir !== 'horizontal')
-              break
-
-            case 'up':
-            case 'down':
-            case 'left':
-            case 'horizontal':
-              valid = valid.filter(dir => dir !== 'left' && dir !== 'vertical' && dir !== 'blank')
-              break
-
-            default:
-              break
-          }
+          neighborState = neighborStates[neighbor]
+          if (!neighborState || neighborState === 'none') break
+          if (neighborState.includes('left')) valid = intersect(solidRight, valid)
+          else valid = intersect(emptyRight, valid)
           break
 
         case 'down':
-          switch (neighborStates[neighbor]) {
-            case 'down':
-            case 'horizontal':
-            case 'blank':
-              valid = valid.filter(dir =>
-                dir !== 'right' &&
-                dir !== 'down' &&
-                dir !== 'left' &&
-                dir !== 'vertical')
-              break
-
-            case 'up':
-            case 'right':
-            case 'left':
-            case 'vertical':
-              valid = valid.filter(dir => dir !== 'up' && dir !== 'horizontal' && dir !== 'blank')
-              break
-
-            default:
-              break
-          }
+          neighborState = neighborStates[neighbor]
+          if (!neighborState || neighborState === 'none') break
+          if (neighborState.includes('up')) valid = intersect(solidDown, valid)
+          else valid = intersect(emptyDown, valid)
           break
 
         case 'left':
-          switch (neighborStates[neighbor]) {
-            case 'left':
-            case 'vertical':
-            case 'blank':
-              valid = valid.filter(dir =>
-                dir !== 'up' &&
-                dir !== 'down' &&
-                dir !== 'left' &&
-                dir !== 'horizontal')
-              break
-
-            case 'up':
-            case 'right':
-            case 'down':
-            case 'horizontal':
-              valid = valid.filter(dir => dir !== 'right' && dir !== 'vertical' && dir !== 'blank')
-              break
-
-            default:
-              break
-          }
+          neighborState = neighborStates[neighbor]
+          if (!neighborState || neighborState === 'none') break
+          if (neighborState.includes('right')) valid = intersect(solidLeft, valid)
+          else valid = intersect(emptyLeft, valid)
           break
 
         default:
@@ -125,22 +79,16 @@ const Tile = ({ getNeighborStates, index, orientations, size, onCollapse }: Tile
       }
     }
 
-    setCollapseOptions(valid)
-  }, [orientations, getNeighborStates, index])
+    setCollapseOptions([...valid])
+  }, [collapse, orientation, orientations, getNeighborStates, index, getOrientationsArray])
 
-  const collapse = () => {
-    const choice = collapseOptions[Math.floor(Math.random() * collapseOptions.length)]
-    onCollapse(index, choice)
-    setOrientation(orientations[choice])
-  }
-
-  const clickHandler = () => { if (orientation === orientations.none) collapse() }
+  const clickHandler = () => orientation === orientations.none && collapse()
 
   const containerSizingStyle = { width: size, height: size }
-
   const maxOptions = Object.keys(orientations).length - 1
   const currentOptions = collapseOptions.length
-  const opacity = (maxOptions - currentOptions) / maxOptions
+  // completely transparent when all choices available, becomes more opaque the fewer options are left for the tile
+  const opacity = 1 / currentOptions - 1 / maxOptions
 
   const uncollapsedImage = 
     <div className={styles.uncollapsed} style={{opacity}}>
@@ -150,11 +98,7 @@ const Tile = ({ getNeighborStates, index, orientations, size, onCollapse }: Tile
   const collapsedImage = <img alt='a tile' src={orientation} className={styles.image} />
 
   return (
-    <div
-      className={styles.container}
-      style={containerSizingStyle}
-      onClick={clickHandler}
-    >
+    <div className={styles.container} style={containerSizingStyle} onClick={clickHandler}>
       {orientation === orientations.none ? uncollapsedImage : collapsedImage}
     </div>
   )

@@ -1,22 +1,24 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from './App.module.css'
 import Grid from './components/Grid'
 
-const rows = 10
+const rows = 25
 const cols = 2 * rows
 
-const handleAutoComplete = () => {
-  console.log('autocompleting')
-}
-
 const App = () => {
+  const [grid, setGrid] = useState(<Grid key={Date.now()} rows={rows} cols={cols}/>)
+
+  const handleAutoComplete = () => {}
+
+  const handleReset = () => setGrid(<Grid key={Date.now()} rows={rows} cols={cols}/>)
+
   return (
     <div className={styles.container}>
-      <Grid rows={rows} cols={cols} />
+      {grid}
       <div className={styles.buttons}>
-        {/*TODO: make these buttons work*/}
+        {/*TODO: make autocomplete work*/}
         <button className={`${styles.button} ${styles.complete}`} onClick={handleAutoComplete}>Auto-Complete</button>
-        <button className={`${styles.button} ${styles.reset}`} onClick={() => {}}>Reset</button>
+        <button className={`${styles.button} ${styles.reset}`} onClick={handleReset} rows={rows} cols={cols}>Reset</button>
       </div>
     </div>
   )

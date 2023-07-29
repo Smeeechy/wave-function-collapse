@@ -13,11 +13,11 @@
 
 .button {
   cursor: pointer;
-  padding: 15px;
+  padding: 5px;
   border-radius: 5px;
-  font-size: xx-large;
+  font-size: larger;
   border: 2px solid black;
-  margin: 15px;
+  margin: 5px;
 }
 
 .reset:active {
