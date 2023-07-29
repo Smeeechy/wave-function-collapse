@@ -65,16 +65,15 @@ const Grid = ({ rows, cols }: GridProps) => {
 
   return (
     <div className={styles.container}>
-      {tiles.map((_, index) => (
+      {tiles.map((_, index) => 
         <Tile
           key={index}
           index={index}
           size={(window.innerWidth - 20) / cols}
           onCollapse={collapseHandler}
           getNeighborStates={getNeighborStates}
-          orientations={orientations}
-        />
-      ))}
+          orientations={orientations} />
+      )}
     </div>
   )
 }

@@ -32,14 +32,14 @@ const Tile = ({ getNeighborStates, index, orientations, size, onCollapse }: Tile
     let valid = new Set(getOrientationsArray().filter(key => key !== 'none'))
 
     // sets containing various tile options for filtering
-    const solidUp = new Set(getOrientationsArray().filter((option: string) => option.includes('up')) as string[])
-    const solidLeft = new Set(getOrientationsArray().filter((option: string) => option.includes('left')) as string[])
-    const solidRight = new Set(getOrientationsArray().filter((option: string) => option.includes('right')) as string[])
-    const solidDown = new Set(getOrientationsArray().filter((option: string) => option.includes('down')) as string[])
-    const emptyUp = new Set(getOrientationsArray().filter((option: string) => !option.includes('up')) as string[])
-    const emptyLeft = new Set(getOrientationsArray().filter((option: string) => !option.includes('left')) as string[])
-    const emptyRight = new Set(getOrientationsArray().filter((option: string) => !option.includes('right')) as string[])
-    const emptyDown = new Set(getOrientationsArray().filter((option: string) => !option.includes('down')) as string[])
+    const solidUp = new Set(getOrientationsArray().filter((option: string) => option.includes('up')))
+    const solidLeft = new Set(getOrientationsArray().filter((option: string) => option.includes('left')))
+    const solidRight = new Set(getOrientationsArray().filter((option: string) => option.includes('right')))
+    const solidDown = new Set(getOrientationsArray().filter((option: string) => option.includes('down')))
+    const emptyUp = new Set(getOrientationsArray().filter((option: string) => !option.includes('up')))
+    const emptyLeft = new Set(getOrientationsArray().filter((option: string) => !option.includes('left')))
+    const emptyRight = new Set(getOrientationsArray().filter((option: string) => !option.includes('right')))
+    const emptyDown = new Set(getOrientationsArray().filter((option: string) => !option.includes('down')))
     
     for (const neighbor in neighborStates) {
       if (neighbor === null) continue
