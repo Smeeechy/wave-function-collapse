@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styles from './App.module.css'
-import Grid from './components/Grid'
+import Grid from './components/Grid.tsx'
 
 const rows = 25
 const cols = 2 * rows

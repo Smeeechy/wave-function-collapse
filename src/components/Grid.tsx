@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import styles from './Grid.module.css'
-import Tile from './Tile'
+import Tile from './Tile.tsx'
 
-type GridProps = {
+type GridPropsType = {
   rows: number,
   cols: number
-};
+}
 
 export type NeighborStatesType = {
   up: string | null,
@@ -14,7 +14,9 @@ export type NeighborStatesType = {
   down: string | null
 }
 
-const orientations = {
+export type OrientationsType = { [key: string]: NodeRequire }
+
+const orientations: OrientationsType = {
   // empty tiles
   none: require('../assets/none.png'),
   blank: require('../assets/blank.png'),
@@ -43,9 +45,7 @@ const orientations = {
   leftright: require('../assets/left-right.png')
 }
 
-export type OrientationsType = typeof orientations;
-
-const Grid = ({ rows, cols }: GridProps) => {
+const Grid = ({ rows, cols }: GridPropsType) => {
   const tileCount = rows * cols
   const [tiles, setTiles]: [string[], Function] = useState(new Array(tileCount).fill('none'))
 
@@ -55,13 +55,13 @@ const Grid = ({ rows, cols }: GridProps) => {
     setTiles(newTiles)
   }
 
-  const getNeighborStates = (index: number): NeighborStatesType => {
+  const getNeighborStates = useCallback((index: number): NeighborStatesType => {
     const up = tiles[index - cols] ? tiles[index - cols] : null
     const left = (index - 1) % cols === cols - 1 ? null : tiles[index - 1]
     const right = (index + 1) % cols === 0 ? null : tiles[index + 1]
     const down = tiles[index + cols] ? tiles[index + cols] : null
     return { up, left, right, down }
-  }
+  }, [cols, tiles])
 
   return (
     <div className={styles.container}>
