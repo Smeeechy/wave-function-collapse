@@ -39,10 +39,11 @@ const orientations: OrientationsType = {
   uprightdown: require('../assets/up-right-down.png'),
   leftrightdown: require('../assets/left-right-down.png'),
 
-  // cross, vertical bar, and horizontal bar
+  // others
   upleftrightdown: require('../assets/up-left-right-down.png'),
   updown: require('../assets/up-down.png'),
-  leftright: require('../assets/left-right.png')
+  leftright: require('../assets/left-right.png'),
+  dot: require('../assets/dot.png')
 }
 
 const Grid = ({ rows, cols }: GridPropsType) => {

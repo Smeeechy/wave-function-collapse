@@ -56,7 +56,7 @@ const Tile = ({ getNeighborStates, index, orientations, size, onCollapse }: Tile
     const neighborStates = getNeighborStates(index)
     for (const neighbor in neighborStates) {
       if (neighbor === null) continue
-      let neighborState: string | null;
+      let neighborState: string | null
 
       switch (neighbor) {
         case 'up':
